@@ -4,16 +4,19 @@
 #include "function.h"
 Node * ptr_Node[500001];
 
-void BubbleSort(int n) {
-    Node *temp;
-    for(int i = n; i >= 2; i--) {
-        for(int j = 1; j <= i-1; j++) {
-            if(ptr_Node[j]->age > ptr_Node[j+1]->age) {
-                temp = ptr_Node[j];
-                ptr_Node[j] = ptr_Node[j+1];
-                ptr_Node[j+1] = temp;
-            }
-        }
+int comp(const void * p1, const void * p2) {
+    const Node ** a1 = (const Node **) p1;
+    const Node ** a2 = (const Node **) p2;
+
+    if((*a1)->age > (*a2)->age) {
+        return 1;
+    }else if ((*a1)->age < (*a2)->age) {
+        return -1;
+    }else {
+        if((*a1)->number > (*a2)->number)
+            return 1;
+        else 
+            return -1;
     }
 }
 
@@ -21,7 +24,7 @@ void BubbleSort(int n) {
 Node* createList(int n) {
     head = NULL;
     Node *cur, *prev;
-    for(int i = 1; i <= n; i++) {
+    for(int i = 0; i < n; i++) {
         cur = (Node*) malloc(sizeof(Node));
         if(head == NULL) {
             head = cur;
@@ -30,7 +33,7 @@ Node* createList(int n) {
             cur->prev = prev;
         }
 
-        if(i == n) {
+        if(i == n-1) {
             cur->next = head;
             head->prev = cur;
         }
@@ -43,7 +46,7 @@ Node* createList(int n) {
     }
 
     //Sort the pointer array
-    BubbleSort(n);
+    qsort(ptr_Node, n, sizeof(Node*), comp);
     return head;
 }
 
@@ -67,7 +70,7 @@ Node* solve(int n, int m) {
     Node *from, *to;
     while(m--) {
         scanf("%d %d %c", &a, &k, &dir);
-        from = ptr_Node[a];
+        from = ptr_Node[a-1];
 
         from->prev->next = from->next;
         from->next->prev = from->prev;
@@ -86,6 +89,5 @@ Node* solve(int n, int m) {
             to->prev = from;
         }
     }
-
-    return ptr_Node[1];
+    return ptr_Node[0];
 }
